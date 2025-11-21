@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="uniquindio.edu.co.poo.elparcial3.ViewController.InicioSesionViewController"
+           style="-fx-background-color: linear-gradient(to bottom right, #2c3e50, #34495e, #3498db);">
+
+    <!-- Contenedor Principal con efecto de tarjeta -->
+    <VBox alignment="CENTER" maxWidth="450" maxHeight="600"
+          style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 30, 0, 0, 10);">
+
+        <padding>
+            <Insets top="50" right="50" bottom="50" left="50"/>
+        </padding>
+
+        <!-- Header con Logo y Título -->
+        <VBox alignment="CENTER" spacing="10">
+            <!-- Ícono de clínica (puedes reemplazar con tu logo) -->
+            <Label text="🏥" style="-fx-font-size: 60px;"/>
+
+            <Label text="Clínica Integral" textFill="#2c3e50">
+                <font>
+                    <Font name="System Bold" size="32.0"/>
+                </font>
+            </Label>
+
+            <Label text="Sistema de Gestión Médica" textFill="#7f8c8d">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+        </VBox>
+
+        <!-- Espaciador -->
+        <Region prefHeight="30"/>
+
+        <!-- Formulario de Login -->
+        <VBox spacing="20" alignment="CENTER">
+
+            <!-- Campo de Usuario/Email -->
+            <VBox spacing="8">
+                <Label text="Usuario o Email" textFill="#2c3e50">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+
+                <HBox fx:id="usernameBox" alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-background-color: #ecf0f1; -fx-background-radius: 10; -fx-padding: 12 15;"
+                      >
+                    <Label text="👤" style="-fx-font-size: 18px;"/>
+                    <TextField fx:id="usernameField" promptText="Ingrese su usuario o email"
+                               style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 14px;"
+
+                               HBox.hgrow="ALWAYS">
+                    </TextField>
+                </HBox>
+            </VBox>
+
+            <!-- Campo de Contraseña -->
+            <VBox spacing="8">
+                <Label text="Contraseña" textFill="#2c3e50">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+
+                <HBox fx:id="passwordBox" alignment="CENTER_LEFT" spacing="10"
+                      style="-fx-background-color: #ecf0f1; -fx-background-radius: 10; -fx-padding: 12 15;"
+                      >
+                    <Label text="🔒" style="-fx-font-size: 18px;"/>
+
+                    <PasswordField fx:id="passwordField" promptText="Ingrese su contraseña"
+                                   style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 14px;"
+
+                                   HBox.hgrow="ALWAYS">
+                    </PasswordField>
+
+                    <TextField fx:id="passwordTextField" promptText="Ingrese su contraseña" visible="false" managed="false"
+                               style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-font-size: 14px;"
+
+                               HBox.hgrow="ALWAYS">
+                    </TextField>
+
+                    <Button fx:id="togglePasswordButton" text="👁️" onAction="#togglePasswordVisibility"
+                            style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 16px; -fx-border-color: transparent;"
+                            >
+                    </Button>
+                </HBox>
+            </VBox>
+
+            <!-- Botón de Iniciar Sesión -->
+            <Button fx:id="loginButton" text="Iniciar Sesión" maxWidth="Infinity" onAction="#handleLogin"
+                    style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 15; -fx-cursor: hand;"
+                   >
+                <font>
+                    <Font name="System Bold" size="16.0"/>
+                </font>
+            </Button>
+
+            <!-- Mensaje de error (oculto por defecto) -->
+            <Label fx:id="errorLabel" textFill="#e74c3c" visible="false" managed="false" wrapText="true" textAlignment="CENTER"
+                   style="-fx-background-color: rgba(231, 76, 60, 0.1); -fx-background-radius: 5; -fx-padding: 10;">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+
+        </VBox>
+
+        <!-- Espaciador -->
+        <Region prefHeight="20" VBox.vgrow="ALWAYS"/>
+
+        <!-- Footer -->
+        <VBox alignment="CENTER" spacing="10">
+            <Separator prefWidth="300" style="-fx-background-color: #bdc3c7;"/>
+
+            <Label text="v1.0.0 © 2025 Clínica Integral" textFill="#95a5a6">
+                <font>
+                    <Font size="10.0"/>
+                </font>
+            </Label>
+        </VBox>
+
+    </VBox>
+
+</StackPane>

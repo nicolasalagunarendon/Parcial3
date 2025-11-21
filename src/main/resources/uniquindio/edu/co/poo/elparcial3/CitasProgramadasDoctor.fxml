@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<VBox spacing="20" style="-fx-background-color: #ecf0f1; -fx-padding: 30;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniquindio.edu.co.poo.elparcial3.ViewController.CitasProgramadasDoctorViewController">
+
+    <!-- Header de la sección -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label style="-fx-font-size: 32px;" text="📅" />
+        <VBox>
+            <Label text="Citas Programadas" textFill="#2c3e50">
+                <font>
+                    <Font name="System Bold" size="26.0" />
+                </font>
+            </Label>
+            <Label text="Gestiona tus consultas del día" textFill="#7f8c8d">
+                <font>
+                    <Font size="14.0" />
+                </font>
+            </Label>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <Label fx:id="lblFechaActual" text="Lunes, 25 de Noviembre 2025" textFill="#34495e">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+    </HBox>
+
+    <!-- Tarjetas de estadísticas -->
+    <HBox spacing="15">
+        <!-- Total de citas -->
+        <VBox spacing="5" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);" HBox.hgrow="ALWAYS">
+            <Label text="Total Citas" textFill="#7f8c8d">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label fx:id="lblTotalCitas" text="8" textFill="#2c3e50">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+                <Label style="-fx-font-size: 24px;" text="📋" />
+            </HBox>
+        </VBox>
+
+        <!-- Citas pendientes -->
+        <VBox spacing="5" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);" HBox.hgrow="ALWAYS">
+            <Label text="Pendientes" textFill="#7f8c8d">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label fx:id="lblCitasPendientes" text="5" textFill="#e67e22">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+                <Label style="-fx-font-size: 24px;" text="⏰" />
+            </HBox>
+        </VBox>
+
+        <!-- En proceso -->
+        <VBox spacing="5" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);" HBox.hgrow="ALWAYS">
+            <Label text="En Proceso" textFill="#7f8c8d">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label fx:id="lblCitasEnProceso" text="1" textFill="#3498db">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+                <Label style="-fx-font-size: 24px;" text="🩺" />
+            </HBox>
+        </VBox>
+
+        <!-- Finalizadas -->
+        <VBox spacing="5" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);" HBox.hgrow="ALWAYS">
+            <Label text="Finalizadas" textFill="#7f8c8d">
+                <font>
+                    <Font size="12.0" />
+                </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label fx:id="lblCitasFinalizadas" text="2" textFill="#27ae60">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+                <Label style="-fx-font-size: 24px;" text="✅" />
+            </HBox>
+        </VBox>
+    </HBox>
+
+    <!-- Filtros y búsqueda -->
+    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btnActualizar" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 8 15; -fx-cursor: hand;" text="Actualizar">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Button>
+    </HBox>
+
+    <!-- Tabla de citas -->
+    <VBox style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);" VBox.vgrow="ALWAYS">
+        <TableView fx:id="tablaCitas" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colFecha" prefWidth="120" style="-fx-alignment: CENTER;" text="Fecha">
+                </TableColumn>
+                <TableColumn fx:id="colPaciente" prefWidth="200" text="Paciente">
+                </TableColumn>
+                <TableColumn fx:id="colDescripcion" prefWidth="300" text="Descripción">
+                </TableColumn>
+                <TableColumn fx:id="colEstado" prefWidth="130" style="-fx-alignment: CENTER;" text="Estado">
+                </TableColumn>
+            </columns>
+            <placeholder>
+                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 40;">
+                    <Label style="-fx-font-size: 48px;" text="📭" />
+                    <Label text="No hay citas programadas" textFill="#7f8c8d">
+                        <font>
+                            <Font name="System Bold" size="16.0" />
+                        </font>
+                    </Label>
+                    <Label text="Las citas aparecerán aquí cuando sean agendadas" textFill="#95a5a6">
+                        <font>
+                            <Font size="12.0" />
+                        </font>
+                    </Label>
+                </VBox>
+            </placeholder>
+        </TableView>
+
+        <!-- Leyenda de estados -->
+        <HBox alignment="CENTER" spacing="20" style="-fx-padding: 15 0 0 0;">
+            <Label text="Leyenda:" textFill="#7f8c8d">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font>
+            </Label>
+            <HBox alignment="CENTER" spacing="5">
+                <Label text="⏰" />
+                <Label text="Pendiente" textFill="#7f8c8d">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </HBox>
+            <HBox alignment="CENTER" spacing="5">
+                <Label text="🩺" />
+                <Label text="En proceso" textFill="#7f8c8d">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </HBox>
+            <HBox alignment="CENTER" spacing="5">
+                <Label text="✅" />
+                <Label text="Finalizada" textFill="#7f8c8d">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </HBox>
+            <HBox alignment="CENTER" spacing="5">
+                <Label text="❌" />
+                <Label text="Cancelada" textFill="#7f8c8d">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+            </HBox>
+        </HBox>
+    </VBox>
+
+
+</VBox>
+
