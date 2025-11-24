@@ -6,15 +6,15 @@ import java.util.ArrayList;
 public class Hospital {
     private String nit;
     private String name;
-    private ArrayList<Paciente> listapacientes;
-    private ArrayList<Medico> listamedicos;
+    private ArrayList<Paciente> listaPacientes;
+    private ArrayList<Medico> listaMedicos;
     private ArrayList <Persona> listaPersonas;
     private ArrayList<Cita> listaCitas;
     private Persona usuarioLogueado;
 
     private Hospital() {
-        listapacientes = new ArrayList<>();
-        listamedicos = new ArrayList<>();
+        listaPacientes = new ArrayList<>();
+        listaMedicos = new ArrayList<>();
         listaPersonas = new ArrayList<>();
         listaCitas = new ArrayList<>();
         this.nit= "123455";
@@ -31,16 +31,16 @@ public class Hospital {
     }
 
     public ArrayList<Paciente> getAllPacientes() {
-        return listapacientes;
+        return listaPacientes;
     }
 
     public ArrayList<Medico> getAllMedicos() {
-        return listamedicos;
+        return listaMedicos;
     }
 
 
     public Paciente buscarPaciente(String id) {
-        for (Paciente paciente : listapacientes) {
+        for (Paciente paciente : listaPacientes) {
             if(paciente.getId().equals(id)){
                 return paciente;
             }
@@ -52,19 +52,19 @@ public class Hospital {
             throw new IllegalArgumentException("Paciente null");
         }
 
-        for (Paciente p : listapacientes) {
+        for (Paciente p : listaPacientes) {
             if (p.getId().equals(paciente.getId())) {
                 throw new IllegalStateException("El Paciente ya existe");
             }
         }
-        listapacientes.add(paciente);
+        listaPacientes.add(paciente);
         listaPersonas.add(paciente);
     }
 
     public void eliminarPaciente(Paciente paciente) {
-        for (Paciente p : listapacientes) {
+        for (Paciente p : listaPacientes) {
             if(p.getId().equals(paciente.getId())){
-                listapacientes.remove(p);
+                listaPacientes.remove(p);
                 listaPersonas.remove(paciente);
                 return;
             }
@@ -72,11 +72,11 @@ public class Hospital {
     }
 
     public void editarPaciente(Paciente paciente) {
-        for (int i=0; i<listapacientes.size(); i++) {
-            if(listapacientes.get(i).getId().equals(paciente.getId())){
+        for (int i=0; i<listaPacientes.size(); i++) {
+            if(listaPacientes.get(i).getId().equals(paciente.getId())){
                 for(int j=0;j<listaPersonas.size();j++){
                     if(listaPersonas.get(j).getId().equals(paciente.getId())){
-                        listapacientes.set(i,paciente);
+                        listaPacientes.set(i,paciente);
                         listaPersonas.set(j,paciente);
                         return;
                     }
@@ -86,7 +86,7 @@ public class Hospital {
     }
 
     public Medico buscarMedico(String id) {
-        for (Medico m : listamedicos) {
+        for (Medico m : listaMedicos) {
             if(m.getId().equals(id)){
                 return m;
             }
@@ -94,18 +94,19 @@ public class Hospital {
     }
 
     public void agregarMedico(Medico medico) {
-        for (Medico m : listamedicos) {
+        for (Medico m : listaMedicos) {
             if(m.getId().equals(medico.getId())){
                 throw new  IllegalStateException("El Medico ya existe");
             }
-        }listamedicos.add(medico);
+        }
+        listaMedicos.add(medico);
         listaPersonas.add(medico);
     }
 
     public void eliminarMedico(Medico medico) {
-        for (Medico m : listamedicos) {
+        for (Medico m : listaMedicos) {
             if(m.getId().equals(medico.getId())){
-                listamedicos.remove(m);
+                listaMedicos.remove(m);
                 listaPersonas.remove(medico);
                 return;
             }
@@ -113,10 +114,10 @@ public class Hospital {
     }
 
     public void  editarMedico(Medico medico) {
-        for (int i=0; i<listamedicos.size(); i++) {
-            if(listamedicos.get(i).getId().equals(medico.getId())){
+        for (int i = 0; i< listaMedicos.size(); i++) {
+            if(listaMedicos.get(i).getId().equals(medico.getId())){
                 for(int j=0;j<listaPersonas.size();j++){
-                    listamedicos.set(i,medico);
+                    listaMedicos.set(i,medico);
                     listaPersonas.set(j,medico);
                     return;
                 }
@@ -125,7 +126,7 @@ public class Hospital {
     }
 
     public Persona buscarPersona(String id) {
-        for (Persona p : listapacientes) {
+        for (Persona p : listaPacientes) {
             if(p.getId().equals(id)){
                 return p;
             }
@@ -148,6 +149,7 @@ public class Hospital {
         }
         listaCitas.add(cita);
         cita.getPaciente().agregarcita(cita);
+        cita.getMedico().agregarCita(cita);
 
     }
 
@@ -217,5 +219,9 @@ public class Hospital {
 
     public void setUsuarioLogueado(Persona usuarioLogueado) {
         this.usuarioLogueado = usuarioLogueado;
+    }
+
+    public ArrayList<Cita> getListaCitas() {
+        return listaCitas;
     }
 }

@@ -16,17 +16,18 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 public class SolicitarCitaPacienteViewController {
     @FXML
     private ComboBox<Medico> cmbMedico;
+    
     @FXML
     private Label lblInfoMedico;
 
     @FXML
     private DatePicker dpFecha;
-    @FXML
-    private ComboBox<String> cmbHora;
+
     @FXML
     private FlowPane flowHorarios;
 
@@ -48,13 +49,31 @@ public class SolicitarCitaPacienteViewController {
     private Medico medicoSeleccionado;
     private LocalTime horaSeleccionada;
     private ObservableList<Medico> listaDoctores;
+    private ObservableList<String> listaHoras;
+
+    /*
+    @FXML
+    public void initialize() {
+        configurarCombos();
+        listaDoctores = FXCollections.observableArrayList(Hospital.getInstance().getAllMedicos());
+        cmbMedico.setItems(listaDoctores);
+        configurarDatePicker();
+        cargarHorariosDisponibles();
+    }
+     */
 
     @FXML
     public void initialize() {
         configurarCombos();
+        listaDoctores = FXCollections.observableArrayList(Hospital.getInstance().getAllMedicos());
+        cmbMedico.setItems(listaDoctores);
+        configurarDatePicker();
 
-        listaDoctores = FXCollections.observableArrayList();
+        configurarEventos(); // <-- IMPORTANTÍSIMO
+
+        // Al iniciar, no cargues horarios sin un médico seleccionado
     }
+
 
     public void setPaciente(Paciente paciente) {
         this.pacienteActual = paciente;
@@ -99,19 +118,18 @@ public class SolicitarCitaPacienteViewController {
     }
 
     private void configurarEventos() {
+
         cmbMedico.setOnAction(e -> {
-            Medico medico = cmbMedico.getValue();
-            if (medico != null) {
-                medicoSeleccionado = medico;
-                actualizarInfoMedico(medico);
-                actualizarResumenMedico(medico);
+            medicoSeleccionado = cmbMedico.getValue();
+            if (medicoSeleccionado != null) {
+                actualizarResumenMedico(medicoSeleccionado);
+
                 if (dpFecha.getValue() != null) {
                     cargarHorariosDisponibles();
                 }
             }
         });
 
-        // Cuando se selecciona fecha, cargar horarios
         dpFecha.setOnAction(e -> {
             if (medicoSeleccionado != null && dpFecha.getValue() != null) {
                 cargarHorariosDisponibles();
@@ -119,17 +137,17 @@ public class SolicitarCitaPacienteViewController {
             }
         });
 
-        // Botones
         btnCancelar.setOnAction(e -> cancelar());
         btnConfirmar.setOnAction(e -> confirmarCita());
 
-        // Motivo con contador de caracteres
         txtMotivo.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.length() > 500) {
                 txtMotivo.setText(oldVal);
             }
+            validarFormulario();
         });
     }
+
 
     private void configurarValidaciones() {
         // Inicialmente el botón confirmar está deshabilitado
@@ -148,59 +166,44 @@ public class SolicitarCitaPacienteViewController {
         btnConfirmar.setDisable(!valido);
     }
 
-    private void cargarEspecialidades() {
-        // Aquí cargarías las especialidades desde la BD
-        ObservableList<String> especialidades = FXCollections.observableArrayList(
-                "Medicina General",
-                "Cardiología",
-                "Pediatría",
-                "Dermatología",
-                "Oftalmología",
-                "Traumatología"
-        );
 
-    }
-
-    private void cargarMedicosPorEspecialidad(String especialidad) {
-        listaDoctores.clear();
-        cmbMedico.getItems().clear();
-        cmbMedico.setItems(listaDoctores);
-        cmbMedico.setPromptText("Selecciona un médico");
-        lblInfoMedico.setText("ℹ️ Selecciona un médico para ver su disponibilidad");
-    }
-
-    private void actualizarInfoMedico(Medico doctor) {
-        lblInfoMedico.setText(String.format(
-                "ℹ️ %s tiene disponibilidad de lunes a viernes",
-                doctor.getNombre()));
-    }
 
     private void cargarHorariosDisponibles() {
         flowHorarios.getChildren().clear();
+
         if (medicoSeleccionado == null || dpFecha.getValue() == null) {
             return;
         }
 
-        // Obtener horarios disponibles del médico
-        List<LocalTime> horariosDisponibles = medicoSeleccionado.getHorasDisponibles();
+        LocalDate fecha = dpFecha.getValue();
 
-        // Filtrar horarios ya ocupados (esto lo harías consultando la BD)
-        LocalDate fechaSeleccionada = dpFecha.getValue();
+        // 1. HORAS BASE DEL MÉDICO
+        List<LocalTime> horasBase = medicoSeleccionado.getHorasDisponibles();
 
+        // 2. HORAS YA OCUPADAS (sacadas del hospital, NO del médico)
+        List<LocalTime> horasOcupadas = Hospital.getInstance()
+                .getListaCitas()
+                .stream()
+                .filter(c -> c.getMedico().equals(medicoSeleccionado)
+                        && c.getFecha().equals(fecha))
+                .map(Cita::getHora)
+                .toList();
+
+        // 3. HORAS FILTRADAS
+        List<LocalTime> horasDisponibles = horasBase.stream()
+                .filter(h -> !horasOcupadas.contains(h))
+                .toList();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-        for (LocalTime hora : horariosDisponibles) {
+        for (LocalTime hora : horasDisponibles) {
             Button btnHora = new Button(hora.format(formatter));
-            btnHora.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; " +
-                    "-fx-background-radius: 6; -fx-padding: 8 15; -fx-cursor: hand;");
-            btnHora.setOnAction(e -> {
-                seleccionarHorario(hora, btnHora);
-            });
-
+            btnHora.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #2c3e50; -fx-background-radius: 6; -fx-padding: 8 15; -fx-cursor: hand;");
+            btnHora.setOnAction(e -> seleccionarHorario(hora, btnHora));
             flowHorarios.getChildren().add(btnHora);
         }
     }
+
 
     private void seleccionarHorario(LocalTime hora, Button botonSeleccionado) {
         horaSeleccionada = hora;
@@ -235,6 +238,7 @@ public class SolicitarCitaPacienteViewController {
         }
     }
 
+    @FXML
     private void confirmarCita() {
         // Validación final
         if (!validarDatos()) {
@@ -250,13 +254,9 @@ public class SolicitarCitaPacienteViewController {
         LocalDateTime fechaHora = LocalDateTime.of(dpFecha.getValue(), horaSeleccionada);
 
         String detalles = String.format(
-                "Médico: %s\n" +
-                        "Especialidad: %s\n" +
-                        "Fecha: %s\n" +
-                        "Motivo: %s",
-                medicoSeleccionado.getNombre(),
-                fechaHora.format(formatter),
-                txtMotivo.getText()
+                "Médico: \n" + medicoSeleccionado.getNombre() + "\n" +
+                        "Fecha: \n" + fechaHora.format(formatter) + "\n" +
+                        "Motivo: \n" + txtMotivo.getText()
         );
 
         confirmacion.setContentText(detalles);
@@ -269,7 +269,7 @@ public class SolicitarCitaPacienteViewController {
     }
 
     private boolean validarDatos() {
-        if (medicoSeleccionado == null) {
+        if (cmbMedico.getSelectionModel().getSelectedItem() == null) {
             mostrarError("Debes seleccionar un médico");
             return false;
         }
@@ -296,7 +296,9 @@ public class SolicitarCitaPacienteViewController {
         try {
             LocalDateTime fechaHora = LocalDateTime.of(dpFecha.getValue(), horaSeleccionada);
             String descripcion = txtMotivo.getText().trim();
-            Cita nuevaCita = new Cita.CitaBuilder().medico(medicoSeleccionado).paciente(pacienteActual).descripcion(descripcion).fecha(LocalDate.now()).hora(horaSeleccionada).estadoCita(new Pendiente()).build();
+            Cita nuevaCita = new Cita.CitaBuilder().id(UUID.randomUUID().toString()).medico(medicoSeleccionado).paciente(pacienteActual)
+                    .descripcion(descripcion).fecha(dpFecha.getValue()).hora(horaSeleccionada)
+                    .estadoCita(new Pendiente()).build();
             Hospital.getInstance().agregarCita(nuevaCita);
             Alert exito = new Alert(Alert.AlertType.INFORMATION);
             exito.setTitle("Cita Agendada");
@@ -322,12 +324,9 @@ public class SolicitarCitaPacienteViewController {
     }
 
     private void limpiarFormulario() {
-        cmbMedico.getItems().clear();
         cmbMedico.setValue(null);
         dpFecha.setValue(null);
-        cmbHora.setValue(null);
         txtMotivo.clear();
-        flowHorarios.getChildren().clear();
 
         medicoSeleccionado = null;
         horaSeleccionada = null;
@@ -335,19 +334,17 @@ public class SolicitarCitaPacienteViewController {
         lblResumenMedico.setText("No seleccionado");
         lblResumenFecha.setText("No seleccionada");
 
-        btnConfirmar.setDisable(true);
     }
 
+    @FXML
     private void cancelar() {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Cancelar");
         confirmacion.setHeaderText("¿Deseas cancelar la solicitud?");
         confirmacion.setContentText("Se perderán los datos ingresados.");
-
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 limpiarFormulario();
-                // navegarACitasProgramadas();
             }
         });
     }

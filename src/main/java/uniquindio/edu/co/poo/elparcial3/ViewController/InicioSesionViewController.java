@@ -17,7 +17,6 @@ public class InicioSesionViewController {
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
     @FXML private TextField passwordTextField;
-    @FXML private Button togglePasswordButton;
     @FXML private Label errorLabel;
     @FXML private Button loginButton;
     @FXML private CheckBox rememberMeCheckbox;
@@ -26,7 +25,7 @@ public class InicioSesionViewController {
 
     private boolean passwordVisible = false;
 
-    // Toggle de visibilidad de la contraseña
+
     @FXML
     private void togglePasswordVisibility(ActionEvent event) {
         if (passwordVisible) {
@@ -54,7 +53,7 @@ public class InicioSesionViewController {
     private void handleLogin(ActionEvent event) {
         String username = usernameField.getText().trim();
         String password = passwordVisible ? passwordTextField.getText() : passwordField.getText();
-
+        JOptionPane.showMessageDialog(null,username+" "+password);
 
         if (Hospital.getInstance().loginPersona(username, password)) {
 

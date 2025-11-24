@@ -17,6 +17,7 @@ public class Medico extends Persona{
         this.correo = build.correo;
         this.listaCitas= new ArrayList<>();
         this.horasDisponibles = new ArrayList<>();
+        inicializarHorasDisponibles();
     }
 
     public static class MedicoBuilder{
@@ -73,14 +74,12 @@ public class Medico extends Persona{
             }
         }
         listaCitas.add(cita);
-        Hospital.getInstance().agregarCita(cita);
     }
 
     public void eliminarCita(Cita cita){
         for(Cita c:listaCitas){
-            if(c.getId()==cita.getId()){
+            if(c.getId().equalsIgnoreCase(cita.getId())){
                 listaCitas.remove(c);
-                Hospital.getInstance().eliminarCita(cita);
                 return;
             }
         }throw new IllegalArgumentException("La Cita no existe");
@@ -105,33 +104,26 @@ public class Medico extends Persona{
         }return citasHoy;
     }
 
-    public void agregarHorasDisponibilidad(LocalTime horasDisponible){
-        for(LocalTime d:horasDisponibles){
-            if(d.isBefore(horasDisponible)){
-                throw new IllegalStateException("Esa hora de disponibilidad ya está registrada");
-            }
-        }horasDisponibles.add(horasDisponible);
-    }
+    private void inicializarHorasDisponibles() {
+        for (int h = 9; h <= 17; h++) {
 
-    public void  eliminarHorasDisponibilidad(LocalTime horasDisponible){
-        for(LocalTime d:horasDisponibles){
-            if(d.isBefore(horasDisponible)){
-                horasDisponibles.remove(d);
-                return;
-            }
-        }throw new IllegalArgumentException("Esa hora de disponibilidad no está registrada");
-    }
+            if (h == 12 || h == 13) continue;
 
-    public void editarHorasDisponibilidad(LocalTime horasDisponible){
-        for(int  i=0; i<horasDisponibles.size();i++){
-            if(horasDisponibles.get(i).isBefore(horasDisponible)){
-                horasDisponibles.set(i,horasDisponible);
-                return;
-            }
-        }throw new IllegalArgumentException("Esa hora de disponibilidad no existe");
+            horasDisponibles.add(LocalTime.of(h, 0));
+        }
     }
 
     public ArrayList<LocalTime> getHorasDisponibles() {
         return horasDisponibles;
     }
+
+    public boolean estaHoraOcupada(LocalDate fecha, LocalTime hora) {
+        for (Cita cita : listaCitas) {
+            if (cita.getFecha().equals(fecha) && cita.getHora().equals(hora)) {
+                return true; // Ya está usada
+            }
+        }
+        return false;
+    }
+
 }

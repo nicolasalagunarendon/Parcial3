@@ -6,10 +6,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import uniquindio.edu.co.poo.elparcial3.model.Cita;
+import uniquindio.edu.co.poo.elparcial3.model.EstadosCita.Consulta;
+import uniquindio.edu.co.poo.elparcial3.model.EstadosCita.Pendiente;
 import uniquindio.edu.co.poo.elparcial3.model.Hospital;
 import uniquindio.edu.co.poo.elparcial3.model.Medico;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class CitasProgramadasDoctorViewController {
@@ -27,12 +30,15 @@ public class CitasProgramadasDoctorViewController {
 
 
     @FXML
-    private Button btnActualizar;
+    private Button btnIniciarCita;
+
+    @FXML
+    private Button btnFinalizarCita;
 
     @FXML
     private TableView<Cita> tablaCitas;
     @FXML
-    private TableColumn<Cita, LocalDateTime> colFecha;
+    private TableColumn<Cita, String> colFecha;
     @FXML
     private TableColumn<Cita, String> colPaciente;
     @FXML
@@ -52,7 +58,69 @@ public class CitasProgramadasDoctorViewController {
         listaCitas = FXCollections.observableArrayList();
         tablaCitas.setItems(listaCitas);
 
+        btnIniciarCita.setOnAction(e -> {
+            Cita seleccionada = tablaCitas.getSelectionModel().getSelectedItem();
+            if (seleccionada != null) {
+                iniciarCita(seleccionada);
+            } else {
+                mostrarNotificacion("Por favor selecciona una cita.", Alert.AlertType.WARNING);
+            }
+        });
 
+        btnFinalizarCita.setOnAction(e -> {
+            Cita seleccionada = tablaCitas.getSelectionModel().getSelectedItem();
+            if (seleccionada != null) {
+                finalizarCita(seleccionada);
+            } else {
+                mostrarNotificacion("Por favor selecciona una cita.", Alert.AlertType.WARNING);
+            }
+        });
+    }
+
+    private void iniciarCita(Cita cita) {
+        if (!(cita.getEstadoCita() instanceof Pendiente)) {
+            mostrarNotificacion("Solo puedes iniciar citas que estén Pendientes.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Iniciar Cita");
+        confirmacion.setHeaderText("¿Deseas iniciar esta cita?");
+        confirmacion.setContentText("Paciente: " + cita.getPaciente().getNombre());
+
+        confirmacion.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+
+                cita.getEstadoCita().manejar(cita);
+
+                tablaCitas.refresh();
+                actualizarEstadisticas();
+                mostrarNotificacion("La cita ha iniciado (ahora está en Consulta).", Alert.AlertType.INFORMATION);
+            }
+        });
+    }
+
+    private void finalizarCita(Cita cita) {
+        if (!(cita.getEstadoCita() instanceof Consulta)) {
+            mostrarNotificacion("Solo puedes finalizar citas que estén en Consulta.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Finalizar Cita");
+        confirmacion.setHeaderText("¿Deseas finalizar esta cita?");
+        confirmacion.setContentText("Paciente: " + cita.getPaciente().getNombre());
+
+        confirmacion.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+
+                cita.getEstadoCita().manejar(cita);
+                cita.getPaciente().eliminarCita(cita);
+                tablaCitas.refresh();
+                actualizarEstadisticas();
+                mostrarNotificacion("La cita ha sido finalizada.", Alert.AlertType.INFORMATION);
+            }
+        });
 
     }
 
@@ -74,25 +142,16 @@ public class CitasProgramadasDoctorViewController {
 
     private void configurarTabla() {
         // Configurar columnas
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        colFecha.setCellFactory(column -> new TableCell<Cita, LocalDateTime>() {
-            private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
-            @Override
-            protected void updateItem(LocalDateTime fecha, boolean empty) {
-                super.updateItem(fecha, empty);
-                if (empty || fecha == null) {
-                    setText(null);
-                } else {
-                    setText(fecha.format(formatter));
-                }
-            }
-        });
+        colFecha.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getHora().format(formatter)));
 
         colPaciente.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getPaciente().getNombre()));
 
-        colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+        colDescripcion.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescripcion()));
 
         colEstado.setCellValueFactory(cellData ->
                 new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEstadoCita().getEstado()));
@@ -112,17 +171,13 @@ public class CitasProgramadasDoctorViewController {
                             emoji = "⏰";
                             color = "-fx-text-fill: #e67e22;";
                             break;
-                        case "en proceso":
+                        case "consulta":
                             emoji = "🩺";
                             color = "-fx-text-fill: #3498db;";
                             break;
                         case "finalizada":
                             emoji = "✅";
                             color = "-fx-text-fill: #27ae60;";
-                            break;
-                        case "cancelada":
-                            emoji = "❌";
-                            color = "-fx-text-fill: #e74c3c;";
                             break;
                     }
 
@@ -148,7 +203,7 @@ public class CitasProgramadasDoctorViewController {
                 case "pendiente":
                     pendientes++;
                     break;
-                case "proceso":
+                case "consulta":
                     Proceso++;
                     break;
                 case "finalizada":
@@ -170,48 +225,7 @@ public class CitasProgramadasDoctorViewController {
     }
 
 
-    private void iniciarCita(Cita cita) {
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Iniciar Cita");
-        confirmacion.setHeaderText("¿Deseas iniciar esta cita?");
-        confirmacion.setContentText("Paciente: " + cita.getPaciente().getNombre() + "\n" +
-                "Descripción: " + cita.getDescripcion());
 
-        confirmacion.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                   // cita.iniciar(); // Patrón State: cambia a EnProcesoState
-                    tablaCitas.refresh();
-                    actualizarEstadisticas();
-
-                    mostrarNotificacion("Cita iniciada exitosamente", Alert.AlertType.INFORMATION);
-                } catch (Exception e) {
-                    mostrarNotificacion("Error: " + e.getMessage(), Alert.AlertType.ERROR);
-                }
-            }
-        });
-    }
-
-    private void finalizarCita(Cita cita) {
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Finalizar Cita");
-        confirmacion.setHeaderText("¿Deseas finalizar esta cita?");
-        confirmacion.setContentText("Paciente: " + cita.getPaciente().getNombre());
-
-        confirmacion.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    //cita.finalizar(); // Patrón State: cambia a FinalizadaState
-                    tablaCitas.refresh();
-                    actualizarEstadisticas();
-
-                    mostrarNotificacion("Cita finalizada exitosamente", Alert.AlertType.INFORMATION);
-                } catch (Exception e) {
-                    mostrarNotificacion("Error: " + e.getMessage(), Alert.AlertType.ERROR);
-                }
-            }
-        });
-    }
 
     private void mostrarNotificacion(String mensaje, Alert.AlertType tipo) {
         Alert alert = new Alert(tipo);

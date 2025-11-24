@@ -3,6 +3,7 @@ package uniquindio.edu.co.poo.elparcial3.ViewController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 import uniquindio.edu.co.poo.elparcial3.App;
 import uniquindio.edu.co.poo.elparcial3.model.Hospital;
 import uniquindio.edu.co.poo.elparcial3.model.Medico;
+import uniquindio.edu.co.poo.elparcial3.model.Paciente;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -58,6 +60,26 @@ public class DoctorDashboardViewController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void onSalir() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/uniquindio/edu/co/poo/elparcial3/InicioSesion.fxml"));
+            Parent root = loader.load();
+
+
+            Stage stage = (Stage) centerStackPane.getScene().getWindow();
+
+
+
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

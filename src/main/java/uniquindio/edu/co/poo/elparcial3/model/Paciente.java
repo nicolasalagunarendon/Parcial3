@@ -1,6 +1,7 @@
 package uniquindio.edu.co.poo.elparcial3.model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Paciente extends Persona{
     private byte edad;
@@ -97,24 +98,22 @@ public class Paciente extends Persona{
         citasProgramadas.add(cita);
     }
 
-    public void eliminarcita(Cita cita){
+    public void cancelarCita(Cita cita){
         for(Cita c: citasProgramadas){
             if(c.getId().equals(cita.getId())){
                 citasProgramadas.remove(c);
                 historialMedico.remove(c);
+                Hospital.getInstance().eliminarCita(cita);
+                cita.getMedico().eliminarCita(cita);
                 return;
             }
         }throw new IllegalArgumentException("La Cita no existe");
     }
 
-    public void editarCita(Cita cita){
-        for(int i = 0; i< historialMedico.size(); i++){
-            if(historialMedico.get(i).getId().equals(cita.getId())){
-                historialMedico.set(i, historialMedico.get(i));
-                return;
-            }
-        }throw new IllegalArgumentException("La Cita no existe");
+    public void eliminarCita(Cita cita) {
+        citasProgramadas.removeIf(c -> Objects.equals(c.getId(), cita.getId()));
     }
+
 
     public ArrayList<Cita> getCitasProgramadas() {
         return citasProgramadas;

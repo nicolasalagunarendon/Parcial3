@@ -38,7 +38,7 @@
             </Button>
 
             <Region prefWidth="160.0" VBox.vgrow="ALWAYS" />
-            <Button maxWidth="Infinity" style="-fx-background-color: #db3434; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10;" text="🚪  Cerrar Sesión" >
+            <Button maxWidth="Infinity" style="-fx-background-color: #db3434; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10;" text="🚪  Cerrar Sesión" onAction="#onSalir">
             </Button>
 
             <Label style="-fx-font-size: 10px;" text="v1.0.0" textFill="#95a5a6" />

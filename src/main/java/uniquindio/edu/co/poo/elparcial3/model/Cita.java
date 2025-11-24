@@ -23,7 +23,7 @@ public class Cita {
         this.fecha = build.fecha;
         this.hora = build.hora;
         this.estadoCita = build.estadoCita;
-        this.precio = build.precio;
+        this.precio = 50000F;
         this.descripcion= build.descripcion;
     }
 
@@ -34,7 +34,6 @@ public class Cita {
         private LocalDate fecha;
         private LocalTime hora;
         private EstadoCita estadoCita;
-        private float precio;
         private String descripcion;
 
         public CitaBuilder id(String id){
@@ -67,10 +66,6 @@ public class Cita {
             return this;
         }
 
-        public CitaBuilder precio(float precio){
-            this.precio = precio;
-            return this;
-        }
 
         public  CitaBuilder descripcion(String descripcion){
             this.descripcion= descripcion;

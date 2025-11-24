@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.text.Font?>
-<VBox spacing="20" style="-fx-background-color: #ecf0f1; -fx-padding: 30;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniquindio.edu.co.poo.elparcial3.ViewController.CitasProgramadasPacienteViewController">
+<VBox spacing="20" style="-fx-background-color: #ecf0f1; -fx-padding: 30;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uniquindio.edu.co.poo.elparcial3.ViewController.CitasProgramadasPacienteViewController">
 
     <!-- Header de la sección -->
     <HBox alignment="CENTER_LEFT" spacing="15">
-        <Label text="📅" style="-fx-font-size: 32px;" />
+        <Label style="-fx-font-size: 32px;" text="📅" />
         <VBox>
             <Label text="Mis Citas Programadas" textFill="#2c3e50">
                 <font>
@@ -25,8 +22,6 @@
             </Label>
         </VBox>
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="btnSolicitar" text="➕ Nueva Cita" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 12 25; -fx-cursor: hand; -fx-font-weight: bold; -fx-font-size: 14px;">
-        </Button>
     </HBox>
 
     <!-- Tarjetas de estadísticas -->
@@ -63,7 +58,7 @@
                         <Font name="System Bold" size="28.0" />
                     </font>
                 </Label>
-                <Label text="⏰" style="-fx-font-size: 24px;" />
+                <Label style="-fx-font-size: 24px;" text="⏰" />
             </HBox>
         </VBox>
 
@@ -80,14 +75,14 @@
                         <Font name="System Bold" size="28.0" />
                     </font>
                 </Label>
-                <Label text="📊" style="-fx-font-size: 24px;" />
+                <Label style="-fx-font-size: 24px;" text="📊" />
             </HBox>
         </VBox>
     </HBox>
 
     <!-- Mensaje de recordatorio -->
     <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: #fff3cd; -fx-border-color: #ffc107; -fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 15;">
-        <Label text="💡" style="-fx-font-size: 24px;" />
+        <Label style="-fx-font-size: 24px;" text="💡" />
         <VBox spacing="3">
             <Label text="Recuerda llegar 10 minutos antes de tu cita" textFill="#856404">
                 <font>
@@ -103,15 +98,15 @@
     </HBox>
 
     <!-- Filtros -->
-    <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
         <Label text="Filtrar:" textFill="#2c3e50">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <ComboBox fx:id="cmbFiltroEstado" promptText="Todas" prefWidth="140" style="-fx-background-color: #ecf0f1; -fx-background-radius: 5;">
+        <ComboBox fx:id="cmbFiltroEstado" prefWidth="140" promptText="Todas" style="-fx-background-color: #ecf0f1; -fx-background-radius: 5;">
         </ComboBox>
-        <ComboBox fx:id="cmbFiltroMes" promptText="Este mes" prefWidth="140" style="-fx-background-color: #ecf0f1; -fx-background-radius: 5;">
+        <ComboBox fx:id="cmbFiltroMes" prefWidth="140" promptText="Este mes" style="-fx-background-color: #ecf0f1; -fx-background-radius: 5;">
         </ComboBox>
         <Region HBox.hgrow="ALWAYS" />
         <CheckBox fx:id="chkSoloProximas" text="Solo próximas" textFill="#2c3e50">
@@ -150,21 +145,21 @@
                 <!-- Información de la cita -->
                 <VBox spacing="8" HBox.hgrow="ALWAYS">
                     <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Label text="🩺" style="-fx-font-size: 18px;" />
+                        <Label style="-fx-font-size: 18px;" text="🩺" />
                         <Label text="Consulta General" textFill="#2c3e50">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label text="⏰ 10:30 AM" textFill="#7f8c8d" style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 5 10;">
+                        <Label style="-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 5 10;" text="⏰ 10:30 AM" textFill="#7f8c8d">
                             <font>
                                 <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
                     </HBox>
 
-                    <HBox spacing="5" alignment="CENTER_LEFT">
+                    <HBox alignment="CENTER_LEFT" spacing="5">
                         <Label text="👨‍⚕️" />
                         <Label text="Dr. Juan Pérez - Medicina General" textFill="#7f8c8d">
                             <font>
@@ -173,7 +168,7 @@
                         </Label>
                     </HBox>
 
-                    <HBox spacing="5" alignment="CENTER_LEFT">
+                    <HBox alignment="CENTER_LEFT" spacing="5">
                         <Label text="📍" />
                         <Label text="Consultorio 203, Edificio Principal" textFill="#7f8c8d">
                             <font>
@@ -182,7 +177,7 @@
                         </Label>
                     </HBox>
 
-                    <HBox spacing="5" alignment="CENTER_LEFT">
+                    <HBox alignment="CENTER_LEFT" spacing="5">
                         <Label text="📝" />
                         <Label text="Motivo: Control rutinario y revisión de exámenes" textFill="#7f8c8d">
                             <font>
@@ -193,18 +188,13 @@
                 </VBox>
 
                 <!-- Botones de acción -->
-                <VBox spacing="10" alignment="CENTER">
-                    <Button text="Ver Detalles" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8 20; -fx-cursor: hand; -fx-min-width: 130;">
+                <VBox alignment="CENTER" spacing="10">
+                    <Button style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8 20; -fx-cursor: hand; -fx-min-width: 130;" text="Ver Detalles">
                         <font>
                             <Font name="System Bold" size="12.0" />
                         </font>
                     </Button>
-                    <Button text="Reagendar" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8 20; -fx-cursor: hand; -fx-min-width: 130;">
-                        <font>
-                            <Font name="System Bold" size="12.0" />
-                        </font>
-                    </Button>
-                    <Button text="Cancelar" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8 20; -fx-cursor: hand; -fx-min-width: 130;">
+                    <Button style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 8 20; -fx-cursor: hand; -fx-min-width: 130;" text="Cancelar">
                         <font>
                             <Font name="System Bold" size="12.0" />
                         </font>

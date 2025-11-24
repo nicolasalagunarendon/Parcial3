@@ -19,7 +19,6 @@ import java.util.Locale;
 
 
 public class CitasProgramadasPacienteViewController {
-    @FXML private Button btnSolicitar;
     @FXML private Label lblProximaCita;
     @FXML private Label lblProximoDoctor;
     @FXML private Label lblCitasPendientes;
@@ -51,7 +50,7 @@ public class CitasProgramadasPacienteViewController {
 
     private void configurarFiltros() {
         cmbFiltroEstado.setItems(FXCollections.observableArrayList(
-                "Todas", "Pendiente", "En Proceso", "Finalizada", "Cancelada"
+                "Todas", "Pendiente", "consulta", "Finalizada"
         ));
         cmbFiltroEstado.setValue("Todas");
 
@@ -166,13 +165,14 @@ public class CitasProgramadasPacienteViewController {
         HBox hboxTitulo = new HBox(10);
         hboxTitulo.setAlignment(Pos.CENTER_LEFT);
 
-        Label lblDescripcion = new Label("🩺 " + cita.getDescripcion());
+        Label lblDescripcion = new Label(cita.getDescripcion());
         lblDescripcion.setStyle("-fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-font-size: 16px;");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label lblHora = new Label("⏰ " + cita.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        Label lblHora = new Label("⏰ " + cita.getHora().format(formatter));
         lblHora.setStyle("-fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-font-size: 12px; " +
                 "-fx-background-color: #ecf0f1; -fx-background-radius: 5; -fx-padding: 5 10;");
 
@@ -181,7 +181,7 @@ public class CitasProgramadasPacienteViewController {
         // Médico
         HBox hboxMedico = new HBox(5);
         hboxMedico.setAlignment(Pos.CENTER_LEFT);
-        Label lblMedico = new Label("👨‍⚕ " + cita.getMedico().getNombre() + " - ");
+        Label lblMedico = new Label("‍⚕ Dr." + cita.getMedico().getNombre() + " - ");
         lblMedico.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 13px;");
         hboxMedico.getChildren().add(lblMedico);
 
@@ -193,7 +193,13 @@ public class CitasProgramadasPacienteViewController {
         lblEstado.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 13px;");
         hboxEstado.getChildren().add(lblEstado);
 
-        vbox.getChildren().addAll(hboxTitulo, hboxMedico, hboxEstado);
+        HBox hboxPrecio = new HBox(5);
+        hboxPrecio.setAlignment(Pos.CENTER_LEFT);
+        Label lblPrecio = new Label("💲 " + cita.getPrecio());
+        lblPrecio.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 13px;");
+        hboxPrecio.getChildren().add(lblPrecio);
+
+        vbox.getChildren().addAll(hboxTitulo, hboxMedico, hboxEstado, hboxPrecio);
         return vbox;
     }
 
@@ -210,11 +216,6 @@ public class CitasProgramadasPacienteViewController {
                     "-fx-min-width: 130; -fx-font-weight: bold; -fx-font-size: 12px;");
             btnVer.setOnAction(e -> verDetallesCita(cita));
 
-            Button btnReagendar = new Button("Reagendar");
-            btnReagendar.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; " +
-                    "-fx-background-radius: 6; -fx-padding: 8 20; -fx-cursor: hand; " +
-                    "-fx-min-width: 130; -fx-font-weight: bold; -fx-font-size: 12px;");
-            btnReagendar.setOnAction(e -> reagendarCita(cita));
 
             Button btnCancelar = new Button("Cancelar");
             btnCancelar.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; " +
@@ -222,7 +223,7 @@ public class CitasProgramadasPacienteViewController {
                     "-fx-min-width: 130; -fx-font-weight: bold; -fx-font-size: 12px;");
             btnCancelar.setOnAction(e -> cancelarCita(cita));
 
-            vbox.getChildren().addAll(btnVer, btnReagendar, btnCancelar);
+            vbox.getChildren().addAll(btnVer, btnCancelar);
         } else {
             Button btnVer = new Button("Ver Detalles");
             btnVer.setStyle("-fx-background-color: #95a5a6; -fx-text-fill: white; " +
@@ -250,7 +251,7 @@ public class CitasProgramadasPacienteViewController {
         Label lblSubtitulo = new Label("Solicita una nueva cita para comenzar");
         lblSubtitulo.setStyle("-fx-text-fill: #95a5a6; -fx-font-size: 14px;");
 
-        placeholder.getChildren().addAll(lblEmoji, lblTitulo, lblSubtitulo, btnSolicitar);
+        placeholder.getChildren().addAll(lblEmoji, lblTitulo, lblSubtitulo);
         vboxCitas.getChildren().add(placeholder);
     }
 
@@ -290,9 +291,8 @@ public class CitasProgramadasPacienteViewController {
     private String obtenerEmojiEstado(Cita cita) {
         return switch (cita.getEstadoCita().getEstado().toLowerCase()) {
             case "pendiente" -> "⏰";
-            case "en proceso" -> "🩺";
+            case "consulta" -> "🩺";
             case "finalizada" -> "✅";
-            case "cancelada" -> "❌";
             default -> "📋";
         };
     }
@@ -300,32 +300,22 @@ public class CitasProgramadasPacienteViewController {
     private void verDetallesCita(Cita cita) {
         Alert detalles = new Alert(Alert.AlertType.INFORMATION);
         detalles.setTitle("Detalles de la Cita");
-        detalles.setHeaderText(cita.getDescripcion());
+        detalles.setHeaderText("Motivo: \n\n" + cita.getDescripcion());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm");
         String contenido = String.format(
-                "📅 Fecha: %s\n\n" +
-                        "👨‍⚕ Médico: %s\n" +
-                        "🏥 Especialidad: %s\n\n" +
-                        "📋 Estado: %s\n\n" +
-                        "💡 Recuerda llegar 10 minutos antes",
-                cita.getFecha().format(formatter),
-                cita.getMedico().getNombre(),
-              //  cita.getMedico().getEspecialidad(),
-                cita.getEstadoCita().getEstado()
+                "📅 Fecha: \n\n" + cita.getFecha().format(formatter) + "\n\n" +
+                        "⏰ Hora: \n\n" + cita.getHora().format(formatterHora) + "\n\n" +
+                        "👨‍⚕ Doctor: \n" +"Dr."+ cita.getMedico().getNombre() + "\n\n" +
+                        "📋 Estado: \n\n" + cita.getEstadoCita().getEstado() + "\n\n" +
+                        "💡 Recuerda llegar 10 minutos antes"
         );
 
         detalles.setContentText(contenido);
         detalles.showAndWait();
     }
 
-    private void reagendarCita(Cita cita) {
-        Alert info = new Alert(Alert.AlertType.INFORMATION);
-        info.setTitle("Reagendar Cita");
-        info.setHeaderText("Funcionalidad en desarrollo");
-        info.setContentText("Podrás reagendar tu cita próximamente.");
-        info.showAndWait();
-    }
 
     private void cancelarCita(Cita cita) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
@@ -335,15 +325,18 @@ public class CitasProgramadasPacienteViewController {
                 "Fecha: %s\n" +
                         "Médico: %s\n\n" +
                         "Esta acción no se puede deshacer.",
-                cita.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                cita.getFecha().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 cita.getMedico().getNombre()
         ));
 
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    //cita.cancelar(); // Patrón State
-                    aplicarFiltros(); // Refrescar vista
+                    pacienteActual.cancelarCita(cita);
+                    listaCitas.remove(cita);
+
+
+                    aplicarFiltros();
 
                     Alert exito = new Alert(Alert.AlertType.INFORMATION);
                     exito.setTitle("Cita Cancelada");
@@ -358,6 +351,8 @@ public class CitasProgramadasPacienteViewController {
             }
         });
     }
+
+
 
 
 }

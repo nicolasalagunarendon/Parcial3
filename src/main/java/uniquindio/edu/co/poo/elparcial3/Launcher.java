@@ -1,6 +1,7 @@
 package uniquindio.edu.co.poo.elparcial3;
 
 import uniquindio.edu.co.poo.elparcial3.model.*;
+import uniquindio.edu.co.poo.elparcial3.model.EstadosCita.Consulta;
 import uniquindio.edu.co.poo.elparcial3.model.EstadosCita.Finalizada;
 import uniquindio.edu.co.poo.elparcial3.model.EstadosCita.Pendiente;
 
@@ -103,70 +104,77 @@ public class Launcher {
                 .peso(76)
                 .build());
 
-        hospital.buscarMedico("100283645").agregarCita(new Cita.CitaBuilder()
+        hospital.agregarCita(new Cita.CitaBuilder()
                 .id("dhymbew589")
                 .paciente(hospital.buscarPaciente("1048573920"))
                 .medico(hospital.buscarMedico("100283645"))
                 .fecha(LocalDate.now())
                 .hora(LocalTime.now())
                 .estadoCita(new Pendiente())
-                .precio(25000)
                 .descripcion("Tiene gripe")
                 .build());
-        hospital.buscarMedico("103844829").agregarCita(new Cita.CitaBuilder()
+        hospital.agregarCita(new Cita.CitaBuilder()
                 .id("cita001")
                 .paciente(hospital.buscarPaciente("1092573310"))
                 .medico(hospital.buscarMedico("103844829"))
                 .fecha(LocalDate.now())
                 .hora(LocalTime.now())
                 .estadoCita(new Finalizada())
-                .precio(30000)
                 .descripcion("Dolor de cabeza persistente")
                 .build());
-        hospital.buscarMedico("102938475").agregarCita(new Cita.CitaBuilder()
+        hospital.agregarCita(new Cita.CitaBuilder()
                 .id("cita002")
                 .paciente(hospital.buscarPaciente("1029384756"))
                 .medico(hospital.buscarMedico("102938475"))
                 .fecha(LocalDate.now().plusDays(5))
-                .hora(LocalTime.of(10, 30))
+                .hora(LocalTime.of(10, 0))
                 .estadoCita(new Pendiente())
-                .precio(45000)
                 .descripcion("Revisión general anual")
                 .build());
-        hospital.buscarMedico("102938475").agregarCita(new Cita.CitaBuilder()
+        hospital.agregarCita(new Cita.CitaBuilder()
                 .id("cita003")
                 .paciente(hospital.buscarPaciente("1092846372"))
                 .medico(hospital.buscarMedico("102938475"))
                 .fecha(LocalDate.now())
                 .hora(LocalTime.of(14, 0))
                 .estadoCita(new Pendiente())
-                .precio(35000)
                 .descripcion("Control de presión arterial")
                 .build());
-        hospital.buscarMedico("102938475").agregarCita(new Cita.CitaBuilder()
+        hospital.agregarCita(new Cita.CitaBuilder()
                 .id("cita004")
                 .paciente(hospital.buscarPaciente("1029384756"))
                 .medico(hospital.buscarMedico("102938475"))
                 .fecha(LocalDate.now())
-                .hora(LocalTime.of(9, 15))
+                .hora(LocalTime.of(9, 0))
                 .estadoCita(new Pendiente())
-                .precio(28000)
                 .descripcion("Lesión en la rodilla")
                 .build());
-        hospital.buscarMedico("102938475").agregarCita(new Cita.CitaBuilder()
+        hospital.agregarCita(new Cita.CitaBuilder()
                 .id("cita005")
                 .paciente(hospital.buscarPaciente("1083746251"))
                 .medico(hospital.buscarMedico("102938475"))
                 .fecha(LocalDate.now())
-                .hora(LocalTime.of(16, 45))
+                .hora(LocalTime.of(16, 0))
                 .estadoCita(new Finalizada())
-                .precio(50000)
                 .descripcion("Revisión por alergias")
                 .build());
-        Medico medico = hospital.buscarMedico("102938475");
-        hospital.setUsuarioLogueado(hospital.buscarPaciente("1029384756"));
+        hospital.agregarCita(new Cita.CitaBuilder()
+                .id("cita006")
+                .paciente(hospital.buscarPaciente("1029384756"))
+                .medico(hospital.buscarMedico("102938475"))
+                .fecha(LocalDate.now().plusDays(6))
+                .hora(LocalTime.of(9, 0))
+                .estadoCita(new Pendiente())
+                .descripcion("Dolor abdominal")
+                .build());
+
+
+        System.out.println("La información de los pacientes y doctores se encuentra en la clase Launcher");
+        System.out.println("Para loguearse como un Paciente aquí uno:" +
+                        "ID del paciente: 1029384756\nContraseña del paciente: seb555\n");
+        System.out.println("Para loguearse como un Médico aquí uno:" +
+                        "ID del doctor: 102938475\nContraseña del Médico: clave001\n");
+
         App.launch(App.class, args);
-
-
     }
 }
